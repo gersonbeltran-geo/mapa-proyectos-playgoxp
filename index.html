@@ -67,6 +67,11 @@ header.pg-header{
 header.pg-header h1{font-size:16px;margin:0;font-weight:600;letter-spacing:.2px;}
 header.pg-header h1 span{color:var(--pg-primary);}
 header.pg-header .pg-count{font-size:12px;color:#B9C4C8;white-space:nowrap;}
+.pg-badges{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.pg-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;color:#fff;letter-spacing:.2px;}
+.pg-badge .pg-badge-num{font-weight:800;}
+.pg-badge-projects{background:var(--pg-primary);}
+.pg-badge-pois{background:#5B6770;}
 .pg-visits-badge{height:20px;display:block;}
 
 .pg-search-wrap{display:flex;gap:8px;align-items:center;flex:1;min-width:220px;max-width:420px;}
@@ -150,7 +155,10 @@ header.pg-header .pg-count{font-size:12px;color:#B9C4C8;white-space:nowrap;}
       <input id="pg-search" type="search" placeholder="Buscar proyecto, lugar o app..." aria-label="Buscar proyecto">
     </div>
     <button id="pg-legend-toggle" aria-expanded="true" aria-controls="pg-legend">🎚 Leyenda</button>
-    <span class="pg-count" id="pg-count"></span>
+    <div class="pg-badges" id="pg-badges">
+      <span class="pg-badge pg-badge-projects">📌 <span id="pg-count-projects" class="pg-badge-num"></span></span>
+      <span class="pg-badge pg-badge-pois">•• <span id="pg-count-pois" class="pg-badge-num"></span></span>
+    </div>
     <img class="pg-visits-badge" id="pg-visits" alt="Visitas" loading="lazy"
       src="https://hits.sh/mapa.playgoxp.com.svg?style=flat-square&label=visitas&color=e86457&labelColor=201a18">
   </header>
@@ -354,7 +362,8 @@ legendToggleBtn.addEventListener('click', ()=>{
 
 /* ============ BUSCADOR + FILTROS ============ */
 const searchInput = document.getElementById('pg-search');
-const countEl = document.getElementById('pg-count');
+const countProjectsEl = document.getElementById('pg-count-projects');
+const countPoisEl = document.getElementById('pg-count-pois');
 
 function applyFilter(){
   const q = searchInput.value.trim().toLowerCase();
@@ -375,7 +384,8 @@ function applyFilter(){
   });
   const totalProjects = markers.filter(x=>x.item.kind!=='poi').length;
   const totalPois = markers.filter(x=>x.item.kind==='poi').length;
-  countEl.textContent = `${visibleProjects} de ${totalProjects} proyectos · ${visiblePois} de ${totalPois} POIs`;
+  countProjectsEl.textContent = `${visibleProjects}/${totalProjects} proyectos`;
+  countPoisEl.textContent = `${visiblePois}/${totalPois} POIs`;
   const visible = visibleProjects + visiblePois;
   if(q && visible === 1 && firstMatch){
     map.setView(firstMatch.getLatLng(), 13);
