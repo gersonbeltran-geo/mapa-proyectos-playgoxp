@@ -67,6 +67,7 @@ header.pg-header{
 header.pg-header h1{font-size:16px;margin:0;font-weight:600;letter-spacing:.2px;}
 header.pg-header h1 span{color:var(--pg-primary);}
 header.pg-header .pg-count{font-size:12px;color:#B9C4C8;white-space:nowrap;}
+.pg-visits-badge{height:20px;display:block;}
 
 .pg-search-wrap{display:flex;gap:8px;align-items:center;flex:1;min-width:220px;max-width:420px;}
 #pg-search{flex:1;padding:8px 12px;border-radius:20px;border:1px solid transparent;font-size:14px;outline:none;}
@@ -148,7 +149,8 @@ header.pg-header .pg-count{font-size:12px;color:#B9C4C8;white-space:nowrap;}
     </div>
     <button id="pg-legend-toggle" aria-expanded="true" aria-controls="pg-legend">🎚 Leyenda</button>
     <span class="pg-count" id="pg-count"></span>
-    <span class="pg-count" id="pg-visits">👁 …</span>
+    <img class="pg-visits-badge" id="pg-visits" alt="Visitas" loading="lazy"
+      src="https://hits.sh/mapa.playgoxp.com.svg?style=flat-square&label=visitas&color=e86457&labelColor=201a18">
   </header>
 
   <nav id="pg-legend" class="open" aria-label="Filtros por sector y tecnología">
@@ -366,16 +368,11 @@ listToggle.addEventListener('click', ()=>{
 });
 
 /* ============ CONTADOR PÚBLICO DE VISITAS ============
-   Usa CountAPI (countapi.xyz), servicio gratuito de terceros sin necesidad
-   de backend propio. Si el servicio no responde, el contador simplemente
-   se oculta sin afectar al resto del mapa. */
-const visitsEl = document.getElementById('pg-visits');
-fetch('https://api.countapi.xyz/hit/playgoxp-mapa-proyectos/visitas')
-  .then(r => r.json())
-  .then(data => {
-    visitsEl.textContent = '👁 ' + data.value.toLocaleString('es-ES') + ' visitas';
-  })
-  .catch(() => { visitsEl.style.display = 'none'; });
+   Usa hits.sh, servicio gratuito de terceros (badge en imagen SVG),
+   sin necesidad de backend propio ni JavaScript adicional: la imagen
+   se autoincrementa cada vez que se carga la página. Si el servicio
+   deja de estar disponible en el futuro, la imagen simplemente no
+   se muestra, sin afectar al resto del mapa. */
 </script>
 </body>
 </html>
