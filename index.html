@@ -83,26 +83,11 @@ header.pg-header .pg-count{font-size:12px;color:#B9C4C8;white-space:nowrap;}
   background:transparent;color:#fff;font-size:13px;cursor:pointer;white-space:nowrap;
 }
 #pg-legend-toggle:hover{border-color:var(--pg-primary);color:var(--pg-primary);}
-#pg-add-toggle, #pg-export-toggle{
+#pg-export-toggle{
   padding:7px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.25);
   background:transparent;color:#fff;font-size:13px;cursor:pointer;white-space:nowrap;
 }
-#pg-add-toggle:hover, #pg-export-toggle:hover{border-color:var(--pg-primary);color:var(--pg-primary);}
-
-#pg-addform{
-  background:#fff;border-bottom:1px solid var(--pg-border);padding:0 16px;
-  max-height:0;overflow:hidden;transition:max-height .25s ease, padding .25s ease;
-}
-#pg-addform.open{max-height:400px;padding:14px 16px;overflow-y:auto;}
-.pg-form-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:8px;}
-#pg-addform label{display:flex;flex-direction:column;gap:3px;font-size:11px;color:#7A8890;font-weight:600;flex:1;min-width:150px;}
-#pg-addform input, #pg-addform select, #pg-addform textarea{
-  font-size:13px;padding:6px 8px;border:1px solid var(--pg-border);border-radius:6px;font-family:inherit;color:var(--pg-text);
-}
-#pg-addform textarea{resize:vertical;width:100%;margin-bottom:8px;}
-.pg-form-pick{align-self:flex-end;border:1px solid var(--pg-primary);background:#fff;color:var(--pg-primary);border-radius:6px;padding:6px 10px;font-size:12px;cursor:pointer;white-space:nowrap;}
-.pg-form-pick.active{background:var(--pg-primary);color:#fff;}
-.pg-form-actions{display:flex;align-items:center;gap:12px;}
+#pg-export-toggle:hover{border-color:var(--pg-primary);color:var(--pg-primary);}
 .pg-form-submit{background:var(--pg-primary);color:#fff;border:none;border-radius:20px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;}
 .pg-form-submit:hover{background:var(--pg-primary-dark);}
 .pg-form-status{font-size:12px;color:var(--pg-accent);font-weight:600;}
@@ -186,7 +171,6 @@ header.pg-header .pg-count{font-size:12px;color:#B9C4C8;white-space:nowrap;}
       <input id="pg-search" type="search" placeholder="Buscar proyecto, lugar o app..." aria-label="Buscar proyecto">
     </div>
     <button id="pg-legend-toggle" aria-expanded="true" aria-controls="pg-legend">🎚 Leyenda</button>
-    <button id="pg-add-toggle" aria-expanded="false" aria-controls="pg-addform">➕ Añadir proyecto</button>
     <button id="pg-export-toggle" aria-expanded="false" aria-controls="pg-exportbox">⭳ Exportar CSV</button>
     <div class="pg-badges" id="pg-badges">
       <span class="pg-badge pg-badge-projects">📌 <span id="pg-count-projects" class="pg-badge-num"></span></span>
@@ -196,55 +180,10 @@ header.pg-header .pg-count{font-size:12px;color:#B9C4C8;white-space:nowrap;}
       src="https://hits.sh/mapa.playgoxp.com.svg?style=flat-square&label=visitas&color=e86457&labelColor=201a18">
   </header>
 
-  <!-- Formulario para añadir un proyecto/POI nuevo. Solo vive en el navegador
-       hasta que se exporta a CSV; no se guarda en ningún servidor. -->
-  <form id="pg-addform" aria-label="Añadir nuevo proyecto al mapa">
-    <div class="pg-form-row">
-      <label>Nombre*<input type="text" id="pgf-name" required placeholder="Nombre del proyecto"></label>
-      <label>Lugar (opcional)<input type="text" id="pgf-place" placeholder="Ciudad / lugar concreto"></label>
-    </div>
-    <div class="pg-form-row">
-      <label>Sector*
-        <select id="pgf-sector" required></select>
-      </label>
-      <label>Tecnología*
-        <select id="pgf-tech" required></select>
-      </label>
-      <label>Tipo*
-        <select id="pgf-kind" required>
-          <option value="proyecto">Proyecto</option>
-          <option value="poi">Punto de interés</option>
-        </select>
-      </label>
-    </div>
-    <label>Descripción (opcional)<textarea id="pgf-desc" rows="2" placeholder="Breve descripción"></textarea></label>
-    <div class="pg-form-row">
-      <label>Latitud*<input type="text" id="pgf-lat" required placeholder="ej. 39.4699"></label>
-      <label>Longitud*<input type="text" id="pgf-lon" required placeholder="ej. -0.3763"></label>
-      <button type="button" id="pgf-pick" class="pg-form-pick">📍 Clic en el mapa</button>
-    </div>
-    <div class="pg-form-row">
-      <label>Enlace (opcional)<input type="url" id="pgf-link-url" placeholder="https://..."></label>
-      <label>Tipo de enlace
-        <select id="pgf-link-kind">
-          <option value="blog">Blog</option>
-          <option value="app">App</option>
-          <option value="video">Vídeo</option>
-        </select>
-      </label>
-    </div>
-    <div class="pg-form-actions">
-      <button type="submit" class="pg-form-submit">Añadir al mapa</button>
-      <span id="pgf-status" class="pg-form-status"></span>
-    </div>
-  </form>
-
   <!-- Exportar a CSV: "Visible ahora" respeta los filtros activos (leyenda + buscador);
        "Añadidos en esta sesión" son solo los creados con el formulario de arriba. -->
   <div id="pg-exportbox">
     <button type="button" id="pg-export-visible">Exportar lo visible según filtros (<span id="pg-export-visible-n">0</span>)</button>
-    <button type="button" id="pg-export-draft">Exportar mis proyectos añadidos (<span id="pg-export-draft-n">0</span>)</button>
-    <button type="button" id="pg-clear-draft">🗑 Vaciar mis añadidos</button>
   </div>
 
   <nav id="pg-legend" class="open" aria-label="Filtros por sector, tecnología y tipo">
@@ -540,112 +479,6 @@ listToggle.addEventListener('click', ()=>{
    deja de estar disponible en el futuro, la imagen simplemente no
    se muestra, sin afectar al resto del mapa. */
 
-/* ============ AÑADIR PROYECTO (formulario) ============
-   Todo lo que se añade aquí vive solo en el navegador (en memoria),
-   nunca se guarda en ningún servidor. Se ve en el mapa al momento con
-   un icono distinto (borde discontinuo dorado) para marcarlo como
-   "sin publicar", y se puede exportar a CSV para mandarlo y que se
-   integre de forma permanente en el archivo real. */
-const addToggleBtn = document.getElementById('pg-add-toggle');
-const addForm = document.getElementById('pg-addform');
-addToggleBtn.addEventListener('click', ()=>{
-  const open = addForm.classList.toggle('open');
-  addToggleBtn.setAttribute('aria-expanded', open);
-});
-
-const sectorSelect = document.getElementById('pgf-sector');
-const techSelect = document.getElementById('pgf-tech');
-Object.keys(SECTOR_LABEL).forEach(k=>{
-  const o = document.createElement('option'); o.value = k; o.textContent = SECTOR_LABEL[k]; sectorSelect.appendChild(o);
-});
-Object.keys(TECH_LABEL).forEach(k=>{
-  const o = document.createElement('option'); o.value = k; o.textContent = TECH_LABEL[k]; techSelect.appendChild(o);
-});
-
-function draftIcon(color){
-  return L.divIcon({
-    className:'',
-    html:`<svg width="26" height="34" viewBox="0 0 26 34" xmlns="http://www.w3.org/2000/svg"><path d="M13 0C5.8 0 0 5.8 0 13c0 9.5 13 21 13 21s13-11.5 13-21C26 5.8 20.2 0 13 0z" fill="${color}" stroke="#FFD34D" stroke-width="2" stroke-dasharray="3,2"/><circle cx="13" cy="13" r="5.5" fill="#fff"/></svg>`,
-    iconSize:[26,34], iconAnchor:[13,34], popupAnchor:[0,-30]
-  });
-}
-
-const draftLayer = L.layerGroup().addTo(map);
-const pgDraftPoints = [];
-const PG_DRAFT_KEY = 'playgo_mapa_borrador_v1';
-
-function saveDraftsToStorage(){
-  try { localStorage.setItem(PG_DRAFT_KEY, JSON.stringify(pgDraftPoints)); } catch(e){ /* almacenamiento no disponible, se ignora */ }
-}
-function renderDraftMarker(item){
-  const m = L.marker([item.lat, item.lon], {icon: draftIcon(sectorColor(item.sector)), title: item.name});
-  m.bindPopup(
-    `<div class="pg-popup">
-       <span class="pg-tag" style="background:${sectorColor(item.sector)}">${SECTOR_LABEL[item.sector]||''}</span>
-       <span class="pg-tag" style="background:#FFD34D;color:#201a18">SIN PUBLICAR</span>
-       <h3>${escapeHtml(item.name)}</h3>
-       ${item.place ? `<div class="pg-place">📍 ${escapeHtml(item.place)}</div>` : ''}
-       ${item.desc ? `<p>${escapeHtml(item.desc)}</p>` : ''}
-     </div>`
-  );
-  draftLayer.addLayer(m);
-}
-// Recuperar lo guardado en este navegador de una sesión anterior, si lo hay
-try {
-  const saved = JSON.parse(localStorage.getItem(PG_DRAFT_KEY) || '[]');
-  saved.forEach(item=>{ pgDraftPoints.push(item); renderDraftMarker(item); });
-  if(saved.length){ document.getElementById('pg-export-draft-n').textContent = saved.length; }
-} catch(e){ /* nada guardado o storage no disponible */ }
-
-const pickBtn = document.getElementById('pgf-pick');
-let picking = false;
-pickBtn.addEventListener('click', ()=>{
-  picking = !picking;
-  pickBtn.classList.toggle('active', picking);
-  pickBtn.textContent = picking ? '📍 Clic en el mapa…' : '📍 Clic en el mapa';
-});
-map.on('click', (e)=>{
-  if(!picking) return;
-  document.getElementById('pgf-lat').value = e.latlng.lat.toFixed(6);
-  document.getElementById('pgf-lon').value = e.latlng.lng.toFixed(6);
-  picking = false;
-  pickBtn.classList.remove('active');
-  pickBtn.textContent = '📍 Clic en el mapa';
-});
-
-document.getElementById('pg-addform').addEventListener('submit', (e)=>{
-  e.preventDefault();
-  const lat = parseFloat(document.getElementById('pgf-lat').value);
-  const lon = parseFloat(document.getElementById('pgf-lon').value);
-  const statusEl = document.getElementById('pgf-status');
-  if(isNaN(lat) || isNaN(lon)){
-    statusEl.textContent = 'Latitud/longitud no válidas.';
-    statusEl.style.color = '#C2185B';
-    return;
-  }
-  const item = {
-    name: document.getElementById('pgf-name').value.trim(),
-    place: document.getElementById('pgf-place').value.trim(),
-    desc: document.getElementById('pgf-desc').value.trim(),
-    sector: sectorSelect.value,
-    tech: techSelect.value,
-    kind: document.getElementById('pgf-kind').value,
-    lat, lon,
-    links: []
-  };
-  const linkUrl = document.getElementById('pgf-link-url').value.trim();
-  if(linkUrl){ item.links.push({url: linkUrl, kind: document.getElementById('pgf-link-kind').value}); }
-
-  renderDraftMarker(item);
-  pgDraftPoints.push(item);
-  saveDraftsToStorage();
-  document.getElementById('pg-export-draft-n').textContent = pgDraftPoints.length;
-
-  statusEl.textContent = `✓ "${item.name}" añadido y guardado en este navegador (${pgDraftPoints.length} en total)`;
-  statusEl.style.color = 'var(--pg-accent)';
-  e.target.reset();
-});
-
 /* ============ EXPORTAR A CSV ============ */
 const exportToggleBtn = document.getElementById('pg-export-toggle');
 const exportBox = document.getElementById('pg-exportbox');
@@ -677,18 +510,6 @@ function downloadCsv(filename, csvText){
 }
 document.getElementById('pg-export-visible').addEventListener('click', ()=>{
   downloadCsv('mapa-playgo-visible.csv', itemsToCsv(lastVisibleItems));
-});
-document.getElementById('pg-export-draft').addEventListener('click', ()=>{
-  if(pgDraftPoints.length===0){ alert('Todavía no has añadido ningún proyecto nuevo.'); return; }
-  downloadCsv('mapa-playgo-nuevos.csv', itemsToCsv(pgDraftPoints));
-});
-document.getElementById('pg-clear-draft').addEventListener('click', ()=>{
-  if(pgDraftPoints.length===0){ return; }
-  if(!confirm(`¿Vaciar los ${pgDraftPoints.length} proyectos que has añadido en este navegador? (Asegúrate de haberlos exportado antes si los quieres conservar)`)) return;
-  pgDraftPoints.length = 0;
-  draftLayer.clearLayers();
-  localStorage.removeItem(PG_DRAFT_KEY);
-  document.getElementById('pg-export-draft-n').textContent = '0';
 });
 </script>
 </body>
