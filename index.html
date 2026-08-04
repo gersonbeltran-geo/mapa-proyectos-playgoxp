@@ -83,22 +83,9 @@ header.pg-header .pg-count{font-size:12px;color:#B9C4C8;white-space:nowrap;}
   background:transparent;color:#fff;font-size:13px;cursor:pointer;white-space:nowrap;
 }
 #pg-legend-toggle:hover{border-color:var(--pg-primary);color:var(--pg-primary);}
-#pg-export-toggle{
-  padding:7px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.25);
-  background:transparent;color:#fff;font-size:13px;cursor:pointer;white-space:nowrap;
-}
-#pg-export-toggle:hover{border-color:var(--pg-primary);color:var(--pg-primary);}
 .pg-form-submit{background:var(--pg-primary);color:#fff;border:none;border-radius:20px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;}
 .pg-form-submit:hover{background:var(--pg-primary-dark);}
 .pg-form-status{font-size:12px;color:var(--pg-accent);font-weight:600;}
-
-#pg-exportbox{
-  background:#fff;border-bottom:1px solid var(--pg-border);padding:0 16px;display:flex;gap:10px;flex-wrap:wrap;
-  max-height:0;overflow:hidden;transition:max-height .25s ease, padding .25s ease;
-}
-#pg-exportbox.open{max-height:100px;padding:12px 16px;}
-#pg-exportbox button{border:1px solid var(--pg-border);background:var(--pg-light);border-radius:20px;padding:7px 14px;font-size:12px;cursor:pointer;color:var(--pg-text);}
-#pg-exportbox button:hover{border-color:var(--pg-primary);color:var(--pg-primary-dark);}
 
 /* Panel leyenda */
 #pg-legend{
@@ -171,7 +158,6 @@ header.pg-header .pg-count{font-size:12px;color:#B9C4C8;white-space:nowrap;}
       <input id="pg-search" type="search" placeholder="Buscar proyecto, lugar o app..." aria-label="Buscar proyecto">
     </div>
     <button id="pg-legend-toggle" aria-expanded="true" aria-controls="pg-legend">🎚 Leyenda</button>
-    <button id="pg-export-toggle" aria-expanded="false" aria-controls="pg-exportbox">⭳ Exportar CSV</button>
     <div class="pg-badges" id="pg-badges">
       <span class="pg-badge pg-badge-projects">📌 <span id="pg-count-projects" class="pg-badge-num"></span></span>
       <span class="pg-badge pg-badge-pois">•• <span id="pg-count-pois" class="pg-badge-num"></span></span>
@@ -179,12 +165,6 @@ header.pg-header .pg-count{font-size:12px;color:#B9C4C8;white-space:nowrap;}
     <img class="pg-visits-badge" id="pg-visits" alt="Visitas" loading="lazy"
       src="https://hits.sh/mapa.playgoxp.com.svg?style=flat-square&label=visitas&color=e86457&labelColor=201a18">
   </header>
-
-  <!-- Exportar a CSV: "Visible ahora" respeta los filtros activos (leyenda + buscador);
-       "Añadidos en esta sesión" son solo los creados con el formulario de arriba. -->
-  <div id="pg-exportbox">
-    <button type="button" id="pg-export-visible">Exportar lo visible según filtros (<span id="pg-export-visible-n">0</span>)</button>
-  </div>
 
   <nav id="pg-legend" class="open" aria-label="Filtros por sector, tecnología y tipo">
     <div class="pg-legend-group" id="pg-legend-type">
@@ -408,7 +388,6 @@ function applyFilter(){
       if(!firstMatch) firstMatch = marker;
     }
   });
-  document.getElementById('pg-export-visible-n').textContent = lastVisibleItems.length;
   const totalProjects = markers.filter(x=>x.item.kind!=='poi').length;
   const totalPois = markers.filter(x=>x.item.kind==='poi').length;
   countProjectsEl.textContent = `${visibleProjects}/${totalProjects} proyectos`;
@@ -479,38 +458,6 @@ listToggle.addEventListener('click', ()=>{
    deja de estar disponible en el futuro, la imagen simplemente no
    se muestra, sin afectar al resto del mapa. */
 
-/* ============ EXPORTAR A CSV ============ */
-const exportToggleBtn = document.getElementById('pg-export-toggle');
-const exportBox = document.getElementById('pg-exportbox');
-exportToggleBtn.addEventListener('click', ()=>{
-  const open = exportBox.classList.toggle('open');
-  exportToggleBtn.setAttribute('aria-expanded', open);
-});
-
-function csvEscape(v){
-  v = (v==null?'':String(v));
-  return '"' + v.replace(/"/g,'""') + '"';
-}
-function itemsToCsv(items){
-  const header = ['nombre','lugar','descripcion','sector','tecnologia','tipo','lat','lon','enlaces'];
-  const rows = items.map(it=>{
-    const enlaces = (it.links||[]).map(l=>`${l.kind}:${l.url}`).join(' | ');
-    return [it.name, it.place||'', it.desc||'', it.sector, it.tech, it.kind, it.lat, it.lon, enlaces]
-      .map(csvEscape).join(',');
-  });
-  return header.join(',') + '\n' + rows.join('\n');
-}
-function downloadCsv(filename, csvText){
-  const blob = new Blob(['\uFEFF' + csvText], {type: 'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = filename;
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-document.getElementById('pg-export-visible').addEventListener('click', ()=>{
-  downloadCsv('mapa-playgo-visible.csv', itemsToCsv(lastVisibleItems));
-});
 </script>
 </body>
 </html>
